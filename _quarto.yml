@@ -1,5 +1,24 @@
 project:
-  title: "Projects"
+  type: book
+  title: Projects
+  output-dir: docs
 
-editor: visual
+book:
+  title: Statistical Computing
+  sidebar:
+    border: true
+    background: light
+    position: right
+  navbar:
+    search: true
+    background: light
+  chapters:
+  - index.qmd
+  - pracOne.qmd
 
+format:
+  html:
+    theme: cosmo
+    toc: true
+    toc-depth: 3
+    toc-location: left
