@@ -26,21 +26,46 @@ print(summary_stats)
 X <- cbind(1, as.matrix(cars[, 1]))  # Add intercept column
 Y <- as.matrix(cars[, 2])
 
-Beta = solve(t(X)%*%X)%*%t(X)%*%Y
-
-Beta
-
-RSS = t(Y-X%*%Beta)%*%(Y-X%*%Beta)
-
-n = nrow(X)
-
-k = ncol(X)
+f <- function(Y, X) {
   
-MSE = as.numeric(RSS)/(n-k)
+  # Beta coefficients
+  Beta = solve(t(X)%*%X)%*%t(X)%*%Y
+  
+  # Residual sum of squares 
+  RSS = t(Y-X%*%Beta)%*%(Y-X%*%Beta)
+  
+  # Number of obs (n) and number of independent variables/predictors (k)
+  n = nrow(X)
+  k = ncol(X)
+  
+  # Mean square error 
+  MSE = as.numeric(RSS)/(n-k)
+  
+  # Standard Errors of Beta coefficients
+  SE = sqrt(diag(MSE * solve(t(X) %*% X)))
+  
+  # t-values
+  t_values = Beta / SE
+  
+  # p-values (two-tailed test)
+  p_values = 2 * pt(-abs(t_values), df = n - k)
+  
+  # Return results as a list
+  return(list(
+    Beta = Beta,
+    RSS = RSS,
+    MSE = MSE,
+    SE = SE,
+    t_values = t_values,
+    p_values = p_values
+  ))
+  
+}
 
-SE = sqrt(diag(MSE * solve(t(X) %*% X)))
+f(Y, X)
 
 # 4. Check that you get the same Beta estimates as when fitting the linear regression model using lm() in R.
 
-summary(lm(dist~speed, data = cars))
+model <- lm(dist~speed, data = cars)
+summary(model)
 
