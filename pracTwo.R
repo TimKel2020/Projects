@@ -69,4 +69,11 @@ lines(x, y_smooth, col = "red", lwd = 2)  # Add smoothed curve in red
 # Create the plot first
 plot(x, y, col = "blue", pch = 16, main = "LOWESS Smoothing")  # Scatter plot of original data
 
-lines(lowess(x, y, f = 0.5, iter = 0))
+lines(lowess_result <- lowess(x, y, f = 0.5, iter = 0))
+
+# Plot results
+plot(x, y, pch = 16, col = "gray", main = "LOWESS Smoothing Comparison", xlab = "x", ylab = "y")
+lines(x, y_smooth, col = "blue", lwd = 2, lty = 2)
+lines(lowess_result, col = "red", lwd = 2, lty = 3)
+legend("topright", legend = c("Custom LOWESS", "Built-in LOWESS"), col = c("blue", "red"), lty = c(2, 3), lwd = 2, cex = 0.8)
+
