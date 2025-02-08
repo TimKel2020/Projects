@@ -11,44 +11,44 @@ head(data.frame(x, y))
 
 #### Implementing the Lowess Algo ####
 
-customLowess <- f(x, y, f){
+customLowess <- function(x, y, f) {
   
-  n = nrow(x)
+  n = nrow(as.matrix(x))
   
-  k = min(n, ceiling(f*n))
+  k = min(n, ceiling(f*n)) + 1 # + 1 to not count xi
   
   y_smooth <- NULL
   
-  for (i in n) {
+  # Matrices X and Y
+  X <- cbind(1, as.matrix(x))  # Add intercept column
+  Y <- as.matrix(y)
+  
+  for (i in 1:n) {
     
     # Compute distances and find closest neighbors
     distances <- abs(x - x[i])
-    neighbor_indices <- order(distances)[1:k]
+    neighbour_indices <- order(distances)[1:k]
     
     # finding max distance
-    dmax <- neighbor_indices[k]
-    
-    # Replace elements not in neighbour_indices with 0
-    filtered_distances <- rep(0, length(distances))  # Initialize with 0s
-    filtered_distances[neighbour_indices] <- distances[neighbour_indices]  # Keep values at neighbour indices
+    dmax <- max(distances[neighbour_indices])
     
     # finding weights
-    weights <- (1 - (filtered_distances/dmax)^3)^3
+    weights <- (1 - (distances/dmax)^3)^3
+    
+    # Apply the condition: If |x_j - x_i| >= dmax, set weight to 0
+    weights[distances >= dmax] <- 0
     
     # Weighted regression matrix W
     W = diag(weights)
-    
-    # Matrices X and Y
-    X <- cbind(1, as.matrix(x))  # Add intercept column
-    Y <- as.matrix(y)
     
     # Optimal Beta 
     Beta = solve(t(X)%*%W%*%X)%*%t(X)%*%W%*%Y
     
     # smoothed value
-    y <- Beta[0] + Beta[1]*x
+    y <- Beta[1] + Beta[2]*x[i]
     
-    y_smooth <- c(y_smooth, y) 
+    #y_smooth <- c(y_smooth, y) 
+    y_smooth[i] <- Beta[1] + Beta[2] * x[i]
     
   }
   
@@ -56,8 +56,17 @@ customLowess <- f(x, y, f){
   
 }
 
-customLowess(x, y, 0.5)
+y_smooth <- customLowess(x, y, 0.5)
+
+# Create the plot first
+plot(x, y, col = "blue", pch = 16, main = "LOWESS Smoothing")  # Scatter plot of original data
+
+# Add smoothed curve
+lines(x, y_smooth, col = "red", lwd = 2)  # Add smoothed curve in red
 
 #### Comparing with R's built-in lowess() ####
 
-lowess(x, y, f = 0.5, iter = 0)
+# Create the plot first
+plot(x, y, col = "blue", pch = 16, main = "LOWESS Smoothing")  # Scatter plot of original data
+
+lines(lowess(x, y, f = 0.5, iter = 0))
