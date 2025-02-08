@@ -58,3 +58,6 @@ customLowess <- f(x, y, f){
 
 customLowess(x, y, 0.5)
 
+#### Comparing with R's built-in lowess() ####
+
+lowess(x, y, f = 0.5, iter = 0)
