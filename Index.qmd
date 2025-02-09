@@ -3,3 +3,237 @@ title: "Index"
 format: html
 ---
 
+# Practical One
+
+NOTE: the answers to the questions below should be placed into their own qmd file in a Quarto project on GitHub. This Quarto project (the rendered document itself, as well as the source code on GitHub) will be peer-assessed next week.
+
+1. Find all rows in “airquality” that have missing values. Note that the airquality dataset in R is always available (just type airquality in the console to see it).
+2. Find mean, sd, min, max for each of temperature and ozone level.
+3. For linear regression, parameter estimates can be found as follows: Beta = ... 
+ Here, Y is the response variable, and X is the design matrix. The cars data (an R data set, also always available in R) contains two variables: speed and distance to stop. Fit a simple linear regression model to these data, i.e. find the Beta estimates, using the equation above, and matrix calcuations in R.
+4. Check that you get the same Beta estimates as when fitting the linear regression model using lm() in R.
+
+
+# Practical Two
+
+## Lowess Practical
+2025-02-06
+
+## Lowess Smoothing
+Locally wieighted scatterplot smoothing (Lowess) is a smoothing technique which is a mixture of moving averages and local regression. Below, we briefly outline the technique before creating a customLowess function.
+
+## What is Lowess?
+The Lowess approach attempts to look at the closest neighbours of a data point to find some weighted average of the closest neighbours to act as the smoothed data point, providing a smoothed function
+
+Steps to Lowess
+1. Data
+As usual, we have observed data pairs
+(x1,y1),…,(xn,yn)
+
+2. Span
+We need to choose the span of the smoothing, denoted f such that 0<f<1. The span defines the number of closest neighbours to use when smoothing point xi such that
+k=⌈f⋅n⌉
+where k is the number of closest neighbours used for point xi and n is the number of observations.
+
+3. Compute Weights
+The weights applied to each neighbour is calculated using the tricube kernel such that
+wj=(1−(|xj−xi|dmax)3)3
+where wj is the weight for neighbour xj, dmax is the distance to the farthest neighbour among the k neighbours selected.
+
+Note that this means that if |xj−wi|≥dmax, then wj=0.
+
+4. Weighted Regression
+Perform a weighted linear regression y=β0+β1x+e where the weighting means that we want to minimise
+∑j∈neighbourswj(yj−(β0+β1xj)2)
+
+The optimal β is given by
+β^=(XTWX)−1XTWy where W is the diagonal matrix given by the diagonal values (w1,...,wk).
+
+The smoothed value for xi is then the predicted value y^i=β^0+β^1xi
+
+5. Repeat for each xi
+Practical
+1. Generate Simulated Data:
+- Set your seed to 1, i.e. set.seed(1).
+- Create x as a sequence of numbers from 1 to 100.
+- Generate y as a noisy sine wave such that
+yi=sin(xi10)+ei
+where ei∼N(0,0.22)
+2. Implement the LOWESS Algorithm:
+- Define a function customLowess(x, y, f) that returns the smoothed values.
+3. Compare with R’s Built-in lowess():
+- Use the built-in lowess() function with the same f value. You will also need to set the iter argument to 0.
+- Plot both curves to compare their smoothing values.
+
+# Practical-Day-Four
+
+## Introduction
+Data analysis is not only about reshaping tables or filtering rows; it’s about drawing insight through rigorous statistics. In this tutorial, we’ll use the tidyverse to load and transform data, then compute interesting statistics such as means, variances, correlations, and even fit a simple regression model. We’ll work with the nycflights13 dataset (which contains information on over 300,000 flights from New York City in 2013) and touch on a case study using baseball batting averages from the Lahman package.
+
+To set up, run the code below:
+
+```{r}
+
+
+# Install tidyverse if not already installed
+if (!requireNamespace("tidyverse", quietly = TRUE)) {
+  install.packages("tidyverse")
+}
+library(tidyverse)
+
+# Install and load nycflights13 for flight data
+if (!requireNamespace("nycflights13", quietly = TRUE)) {
+  install.packages("nycflights13")
+}
+library(nycflights13)
+
+```
+
+## Questions
+Use tidyr and dplyr wherever appropriate below. In other words, do not use base R functions unless necessary or otherwise instructed.
+
+Using the flights dataset:
+
+1. Display the flights dataset in an alternative format to simply printing it (i.e. running flights).
+2. Rewrite this code using dplyr and the pipe:
+
+```{r}
+
+flight1 <- flights[flights$month == 1, ]
+carrier_vec <- unique(flight1$carrier)
+carrier_dist_vec_mean <- numeric(length(carrier_vec))
+carrier_dist_vec_sd <- numeric(length(carrier_vec))
+for (i in seq_along(carrier_vec)) {
+  carrier_dist_vec_mean[i] <- mean(
+    flight1$distance[flight1$carrier == carrier_vec[i]]
+   )
+  carrier_dist_vec_sd[i] <- sd(
+    flight1$distance[flight1$carrier == carrier_vec[i]]
+  )
+}
+dist_tbl <- tibble(
+  carrier = carrier_vec,
+  mean_distance = carrier_dist_vec_mean,
+  sd_distance = carrier_dist_vec_sd
+)
+dist_tbl[order(dist_tbl$mean_distance), ]
+
+```
+
+3. Explain why the standard deviation is NA for one carrier, and why it is 0 for others. Demonstrate your answer using code.
+
+4. Using tidyr and dplyr where appropriate, construct a dataframe where the carriers are along the columns, and the rows are the average departure delay (dep_delay) flown by each carrier (carrier) in each month.
+
+5. Calculate the proportion of flights that were delayed (dep_delay greater than 0) but arrived on or before time (arr_delay less than or equal to 0).
+
+6. Using the airlines and flights datasets, do the following, showing the output from each step:
+
+- Identify routes that more than one airline flies
+- For each such route, calculate the average arrival delay for each airline (exclude NAs). Find the names of these airlines.
+- For each such route, identify the airline with the worst and best average arrival delay.
+- Identify the route with the greatest difference between the best and worst performing airlines
+- Determine the reason for this difference
+
+7. Identify all columns with missing entries, typos and any other inconsistencies in the dataset below (load it just by running the code; created using dput command, FYI):
+
+```{r}
+
+structure(list(id = c("id_1", "id_2", "id_3", "id_4", "id_5", 
+"id_6", "id_7", "id_8", "id_9", "id_10", "id_11", "id_12", "id_13", 
+"id_14", "id_15", "id_16", "id_17", "id_18", "id_19", "id_20", 
+"id_21", "id_22", "id_23", "id_24", "id_25", "id_26", "id_27", 
+"id_28", "id_29", "id_30", "id_31", "id_32", "id_33", "id_34", 
+"id_35", "id_36", "id_37", "id_38", "id_39", "id_40", "id_41", 
+"id_42", "id_43", "id_44", "id_45", "id_46", "id_47", "id_48", 
+"id_49", "id_50"), age = c(50L, 34L, 70L, 33L, 22L, 61L, 69L, 
+73L, 62L, 56L, 71L, 33L, 73L, 44L, 45L, 46L, 24L, 70L, 46L, 76L, 
+47L, 76L, 28L, 48L, 54L, 27L, 45L, 26L, 61L, 28L, 38L, 55L, 33L, 
+36L, 62L, 58L, 72L, 31L, 34L, 51L, 61L, 64L, 26L, 28L, 60L, 29L, 
+42L, 46L, 79L, 72L), gender = c("male", "male", "male", "female", 
+"female", "male", "female", "male", "male", "female", "female", 
+"male", "male", "female", "male", "male", "male", "male", "female", 
+"male", "male", "male", "male", "female", "femal", "male", "female", 
+"female", "female", "female", "male", "female", "female", "female", 
+"male", "male", "female", "male", "female", "female", "male", 
+"female", "female", "male", "male", "female", "male", "male", 
+"male", "female"), height = c(174.4, 197.7, 174.1, 194.5, NA, 
+180.4, 170.5, 157.4, 196.8, 165.1, 153, 197.4, 186, 157.1, 177.5, 
+197.7, 179.3, 170.2, 182.4, NA, 165.4, 161, 168.5, 199.2, 157.7, 
+154.6, 157.1, 184.5, 181, 194.6, 183.6, 186.9, 176.1, 183, 191.1, 
+189.3, 199, 172, 165.6, 170.5, 150.5, 159.2, 192.1, 161.6, 162, 
+153.8, 162.3, 186.6, 192.4, 174.9), weight = c(69.4, 62.3, 55.6, 
+69.5, 78.6, 60.8, 72.2, 60.9, 75.1, 67.7, 82.5, 68.7, 67.8, 76.7, 
+87, 61.1, 70.6, 63.3, 81.5, 59.2, 93.2, 87.3, 83.4, 80.9, 68.6, 
+76.5, 93.7, 79.1, 92, 65.6, 85.4, 63.3, 79.7, 74.1, 63.3, 78.2, 
+95.7, 95.1, 63.7, 66.1, 99.3, 81, 96.9, 73.3, 70.3, 83, 57.6, 
+78.6, 61.9, 98.1), blood_type = c("O", "A", "O", "O", "B", "AB", 
+"O", "O", "O", "AB", "A", "O", "O", "O", "B", "A", "B", "AB", 
+"O", "AB", "A", "AB", "O", "B", "A", "A", "B", "AB", "A", "B", 
+"B", "A", "O", "O", "O", "B", "O", "A", "A", "B", "A", "O", "AB", 
+"A", "A", "O", "O", "B", "A", "O"), disease_status = c("diseased", 
+"healthy", "healthy", "healthy", "healthy", "healthy", "diseased", 
+"healthy", "diseased", "Healthy", "diseased", "healthy", "diseased", 
+"healthy", "diseased", "healthy", "healthy", "healthy", "healthy", 
+"healthy", "healthy", "diseased", "healthy", "diseased", "healthy", 
+"healthy", "healthy", "healthy", "diseased", "diseased", "healthy", 
+"healthy", "healthy", "diseased", "diseased", "diseased", "healthy", 
+"diseased", "healthy", "healthy", "healthy", "healthy", "healthy", 
+"diseased", "diseased", "diseased", "healthy", "healthy", "diseased", 
+"diseased"), cholesterol = c(228, 223, 213, 198, 166, 151, 195, 
+199, 189, 196, 221, 156, 185, 230, 234, 174, 185, 236, 235, 180, 
+165, 220, 160, 153, 250, 153, 184, 242, 212, 179, 224, 233, 181, 
+199, 220, 214, 214, 248, 191, 162, 203, 173, 199, 187, 248, 189, 
+173, 212, 164, 247), glucose = c(96, 78, 101, 119, 103, 91, 86, 
+NA, 77, 80, 115, 85, 88, 109, NA, 71, 90, 94, 91, 87, 113, 93, 
+97, 118, 109, 80, 85, 119, 99, 108, 89, 108, 97, 116, 79, 84, 
+75, 81, 119, NA, 106, 109, 75, 82, 84, 75, 76, 120, 119, 77), 
+    smoker = c("yes", "yes", "yes", "yes", "no", "yes", "no", 
+    "yes", "no", "no", "no", "no", "no", "yes", "no", "yes", 
+    "yes", "yes", "yes", "yes", "yes", "yes", "yes", "yes", "no", 
+    "no", "yes", "yes", "yes", "no", "no", "yes", "no", "yes", 
+    "no", "yes", "no", "yes", "yes", "yes", "no", "no", "yes", 
+    "no", "no", "no", "no", "no", "no", "yes"), exercise = c("occasional", 
+    "regular", "occasional", "regular", "none", "occasional", 
+    "regular", "none", "occasional", "none", "occasional", "none", 
+    "none", "regular", "occasional", "none", "regular", "regular", 
+    "none", "occasional", "none", "occasional", "occasional", 
+    "occasional", "regular", "occasional", "regular", "regular", 
+    "regular", "occasional", "occasional", "none", "none", "regular", 
+    "occasional", "occasional", "none", "none", "none", "none", 
+    "occasional", "regular", "regular", "none", "regular", "occasional", 
+    "occasional", "none", "occasional", "regular"), income = c(84820L, 
+    81547L, 22588L, 72490L, 74533L, 25338L, 41469L, 57315L, 63629L, 
+    88662L, 62615L, 56261L, 58499L, 82232L, 77584L, 77275L, 38468L, 
+    54510L, 91326L, 78611L, 31402L, 29586L, 21441L, 58269L, 84173L, 
+    88295L, 37940L, 43750L, 69750L, 92356L, 82518L, 91455L, 68866L, 
+    51178L, 68275L, 27689L, 35418L, 81318L, 62405L, 86851L, 25654L, 
+    47553L, 74474L, 51409L, 22607L, 55360L, 96351L, 21516L, 41927L, 
+    55810L), education = c("master", "bachelor", "PhD", "master", 
+    "bachelor", "highschool", "PhD", "highschool", "PhD", "PhD", 
+    "bachelor", "highschool", "master", "bachelor", "PhD", "PhD", 
+    "PhD", "bachelor", "master", "highschool", "PhD", "highschool", 
+    "bachelor", "master", "highschool", "highschool", "master", 
+    "master", "bachelor", "PhD", "highschool", "PhD", "master", 
+    "master", "master", "PhD", "highschool", "master", "master", 
+    "highschool", "bachelor", "highschool", "bachelor", "PhD", 
+    "bachelor", "highschool", "master", "highschool", "bachelor", 
+    "bachelor"), region = c("North", "South", "North", "West", 
+    "North", "West", "South", "South", "West", "South", "West", 
+    "South", "West", "East", "North", "West", "North", "North", 
+    "West", "North", "East", "West", "South", "North", "North", 
+    "East", "East", "North", "North", "West", "South", "West", 
+    "West", "East", "West", "North", "West", "North", "East", 
+    "North", "West", "South", "South", "East", "North", "West", 
+    "West", "East", "North", "East"), marital_status = c("divorced", 
+    "single", "divorced", "divorced", "divorced", "divorced", 
+    "divorced", "married", "divorced", "married", "divorced", 
+    "widowed", "married", "single", "widowed", "widowed", "single", 
+    "divorced", "widowed", "widowed", "single", "married", "single", 
+    "married", "widowed", "married", "single", "single", "widowed", 
+    "married", "widowed", "divorced", "single", "married", "single", 
+    "widowed", "widowed", "married", "widowed", "divorced", "married", 
+    "married", "divorced", "single", "married", "widowed", "divorced", 
+    "divorced", "single", "divorced")), row.names = c(NA, -50L
+), class = c("tbl_df", "tbl", "data.frame"))
+
+```
