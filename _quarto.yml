@@ -16,6 +16,8 @@ book:
   - index.qmd
   - pracOne.qmd
   - pracTwo.qmd
+  - prac-day-four.qmd
+  - prac-day-five.qmd
 
 format:
   html:
