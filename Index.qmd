@@ -1,5 +1,5 @@
 ---
-title: "Index"
+title: "Introduction"
 format: html
 ---
 
@@ -7,67 +7,64 @@ format: html
 
 NOTE: the answers to the questions below should be placed into their own qmd file in a Quarto project on GitHub. This Quarto project (the rendered document itself, as well as the source code on GitHub) will be peer-assessed next week.
 
-1. Find all rows in “airquality” that have missing values. Note that the airquality dataset in R is always available (just type airquality in the console to see it).
-2. Find mean, sd, min, max for each of temperature and ozone level.
-3. For linear regression, parameter estimates can be found as follows: Beta = ... 
- Here, Y is the response variable, and X is the design matrix. The cars data (an R data set, also always available in R) contains two variables: speed and distance to stop. Fit a simple linear regression model to these data, i.e. find the Beta estimates, using the equation above, and matrix calcuations in R.
-4. Check that you get the same Beta estimates as when fitting the linear regression model using lm() in R.
-
+1.  Find all rows in “airquality” that have missing values. Note that the airquality dataset in R is always available (just type airquality in the console to see it).
+2.  Find mean, sd, min, max for each of temperature and ozone level.
+3.  For linear regression, parameter estimates can be found as follows: Beta = ... Here, Y is the response variable, and X is the design matrix. The cars data (an R data set, also always available in R) contains two variables: speed and distance to stop. Fit a simple linear regression model to these data, i.e. find the Beta estimates, using the equation above, and matrix calcuations in R.
+4.  Check that you get the same Beta estimates as when fitting the linear regression model using lm() in R.
 
 # Practical Two
 
 ## Lowess Practical
+
 2025-02-06
 
 ## Lowess Smoothing
+
 Locally wieighted scatterplot smoothing (Lowess) is a smoothing technique which is a mixture of moving averages and local regression. Below, we briefly outline the technique before creating a customLowess function.
 
 ## What is Lowess?
+
 The Lowess approach attempts to look at the closest neighbours of a data point to find some weighted average of the closest neighbours to act as the smoothed data point, providing a smoothed function
 
-Steps to Lowess
-1. Data
-As usual, we have observed data pairs
-(x1,y1),…,(xn,yn)
+Steps to Lowess:
 
-2. Span
-We need to choose the span of the smoothing, denoted f such that 0<f<1. The span defines the number of closest neighbours to use when smoothing point xi such that
-k=⌈f⋅n⌉
-where k is the number of closest neighbours used for point xi and n is the number of observations.
+1\. Data As usual, we have observed data pairs $(x_1,y_1),…,(x_n,y_n)$
 
-3. Compute Weights
-The weights applied to each neighbour is calculated using the tricube kernel such that
-wj=(1−(|xj−xi|dmax)3)3
-where wj is the weight for neighbour xj, dmax is the distance to the farthest neighbour among the k neighbours selected.
+2\. Span We need to choose the span of the smoothing, denoted f such that $0<f<1$. The span defines the number of closest neighbours to use when smoothing point $x_i$ such that $k=⌈f⋅n⌉$ where $k$ is the number of closest neighbours used for point and n is the number of observations.
 
-Note that this means that if |xj−wi|≥dmax, then wj=0.
+3\. Compute Weights The weights applied to each neighbour is calculated using the tricube kernel such that $$w_j=(1−(\frac{|x_j−x_i|}{d_{max}})^3)^3$$ where $w_j$ is the weight for neighbour $x_j$, $d_{max}$ is the distance to the farthest neighbour among the k neighbours selected.
 
-4. Weighted Regression
-Perform a weighted linear regression y=β0+β1x+e where the weighting means that we want to minimise
-∑j∈neighbourswj(yj−(β0+β1xj)2)
+Note that this means that if $|x_j−x_i|≥d_{max}$, then $w_j=0$.
 
-The optimal β is given by
-β^=(XTWX)−1XTWy where W is the diagonal matrix given by the diagonal values (w1,...,wk).
+4\. Weighted Regression Perform a weighted linear regression $y=β_0+β_1x+e$ where the weighting means that we want to minimise $$\sum_{j∈neighbours}w_j(y_j−(\beta_0+\beta_1x_j)^2)$$
 
-The smoothed value for xi is then the predicted value y^i=β^0+β^1xi
+The optimal $\beta$ is given by $\hat{\beta} = (X^T W X)^{-1} X^T W y$ where $W$ is the diagonal matrix given by the diagonal values $(w_1,...,w_k)$.
 
-5. Repeat for each xi
-Practical
-1. Generate Simulated Data:
-- Set your seed to 1, i.e. set.seed(1).
-- Create x as a sequence of numbers from 1 to 100.
-- Generate y as a noisy sine wave such that
-yi=sin(xi10)+ei
-where ei∼N(0,0.22)
-2. Implement the LOWESS Algorithm:
-- Define a function customLowess(x, y, f) that returns the smoothed values.
-3. Compare with R’s Built-in lowess():
-- Use the built-in lowess() function with the same f value. You will also need to set the iter argument to 0.
-- Plot both curves to compare their smoothing values.
+The smoothed value for $x_i$ is then the predicted value $y^i=\hat\beta_0+\hat\beta_1x_i$
+
+5\. Repeat for each $x_i$
+
+## Practical
+
+1.  Generate Simulated Data:
+
+    -   Set your seed to 1, i.e. set.seed(1).
+    -   Create x as a sequence of numbers from 1 to 100.
+    -   Generate y as a noisy sine wave such that $y_i = \sin\left(\frac{x_i}{10}\right) + e_i, \quad e_i \sim N(0, 0.2^2)$
+
+2.  Implement the LOWESS Algorithm:
+
+    -   Define a function customLowess(x, y, f) that returns the smoothed values.
+
+3.  Compare with R’s Built-in lowess():
+
+    -   Use the built-in lowess() function with the same f value. You will also need to set the iter argument to 0.
+    -   Plot both curves to compare their smoothing values.
 
 # Practical-Day-Four
 
 ## Introduction
+
 Data analysis is not only about reshaping tables or filtering rows; it’s about drawing insight through rigorous statistics. In this tutorial, we’ll use the tidyverse to load and transform data, then compute interesting statistics such as means, variances, correlations, and even fit a simple regression model. We’ll work with the nycflights13 dataset (which contains information on over 300,000 flights from New York City in 2013) and touch on a case study using baseball batting averages from the Lahman package.
 
 To set up, run the code below:
@@ -90,12 +87,13 @@ library(nycflights13)
 ```
 
 ## Questions
+
 Use tidyr and dplyr wherever appropriate below. In other words, do not use base R functions unless necessary or otherwise instructed.
 
 Using the flights dataset:
 
-1. Display the flights dataset in an alternative format to simply printing it (i.e. running flights).
-2. Rewrite this code using dplyr and the pipe:
+1.  Display the flights dataset in an alternative format to simply printing it (i.e. running flights).
+2.  Rewrite this code using dplyr and the pipe:
 
 ```{r}
 
@@ -120,21 +118,21 @@ dist_tbl[order(dist_tbl$mean_distance), ]
 
 ```
 
-3. Explain why the standard deviation is NA for one carrier, and why it is 0 for others. Demonstrate your answer using code.
+3.  Explain why the standard deviation is NA for one carrier, and why it is 0 for others. Demonstrate your answer using code.
 
-4. Using tidyr and dplyr where appropriate, construct a dataframe where the carriers are along the columns, and the rows are the average departure delay (dep_delay) flown by each carrier (carrier) in each month.
+4.  Using tidyr and dplyr where appropriate, construct a dataframe where the carriers are along the columns, and the rows are the average departure delay (dep_delay) flown by each carrier (carrier) in each month.
 
-5. Calculate the proportion of flights that were delayed (dep_delay greater than 0) but arrived on or before time (arr_delay less than or equal to 0).
+5.  Calculate the proportion of flights that were delayed (dep_delay greater than 0) but arrived on or before time (arr_delay less than or equal to 0).
 
-6. Using the airlines and flights datasets, do the following, showing the output from each step:
+6.  Using the airlines and flights datasets, do the following, showing the output from each step:
 
-- Identify routes that more than one airline flies
-- For each such route, calculate the average arrival delay for each airline (exclude NAs). Find the names of these airlines.
-- For each such route, identify the airline with the worst and best average arrival delay.
-- Identify the route with the greatest difference between the best and worst performing airlines
-- Determine the reason for this difference
+    -   Identify routes that more than one airline flies
+    -   For each such route, calculate the average arrival delay for each airline (exclude NAs). Find the names of these airlines.
+    -   For each such route, identify the airline with the worst and best average arrival delay.
+    -   Identify the route with the greatest difference between the best and worst performing airlines
+    -   Determine the reason for this difference
 
-7. Identify all columns with missing entries, typos and any other inconsistencies in the dataset below (load it just by running the code; created using dput command, FYI):
+7.  Identify all columns with missing entries, typos and any other inconsistencies in the dataset below (load it just by running the code; created using dput command, FYI):
 
 ```{r}
 
