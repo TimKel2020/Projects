@@ -56,7 +56,7 @@ customLowess <- function(x, y, f) {
   
 }
 
-y_smooth <- customLowess(x, y, 0.5)
+y_smooth <- customLowess(x, y, 0.05)
 
 # Create the plot first
 plot(x, y, col = "blue", pch = 16, main = "LOWESS Smoothing")  # Scatter plot of original data
@@ -69,7 +69,7 @@ lines(x, y_smooth, col = "red", lwd = 2)  # Add smoothed curve in red
 # Create the plot first
 plot(x, y, col = "blue", pch = 16, main = "LOWESS Smoothing")  # Scatter plot of original data
 
-lines(lowess_result <- lowess(x, y, f = 0.5, iter = 0))
+lines(lowess_result <- lowess(x, y, f = 0.05, iter = 0))
 
 # Plot results
 plot(x, y, pch = 16, col = "gray", main = "LOWESS Smoothing Comparison", xlab = "x", ylab = "y")
