@@ -3,16 +3,22 @@ title: "Introduction"
 format: html
 ---
 
-# Practical One
+This introduction includes a link to the git repository and the practical questions.
+
+# Git Repository
+
+https://github.com/TimKel2020/Projects
+
+# 1. Practical One
 
 NOTE: the answers to the questions below should be placed into their own qmd file in a Quarto project on GitHub. This Quarto project (the rendered document itself, as well as the source code on GitHub) will be peer-assessed next week.
 
 1.  Find all rows in “airquality” that have missing values. Note that the airquality dataset in R is always available (just type airquality in the console to see it).
 2.  Find mean, sd, min, max for each of temperature and ozone level.
-3.  For linear regression, parameter estimates can be found as follows: Beta = ... Here, Y is the response variable, and X is the design matrix. The cars data (an R data set, also always available in R) contains two variables: speed and distance to stop. Fit a simple linear regression model to these data, i.e. find the Beta estimates, using the equation above, and matrix calcuations in R.
+3.  For linear regression, parameter estimates can be found as follows: $\beta$. Here, Y is the response variable, and X is the design matrix. The cars data (an R data set, also always available in R) contains two variables: speed and distance to stop. Fit a simple linear regression model to these data, i.e. find the Beta estimates, using the equation above, and matrix calcuations in R.
 4.  Check that you get the same Beta estimates as when fitting the linear regression model using lm() in R.
 
-# Practical Two
+# 2. Practical Two
 
 ## Lowess Practical
 
@@ -20,7 +26,7 @@ NOTE: the answers to the questions below should be placed into their own qmd fil
 
 ## Lowess Smoothing
 
-Locally wieighted scatterplot smoothing (Lowess) is a smoothing technique which is a mixture of moving averages and local regression. Below, we briefly outline the technique before creating a customLowess function.
+Locally wieighted scatterplot smoothing (Lowess) is a smoothing technique which is a mixture of moving averages and local regression. Below, we briefly outline the technique before creating a `customLowess` function.
 
 ## What is Lowess?
 
@@ -28,15 +34,23 @@ The Lowess approach attempts to look at the closest neighbours of a data point t
 
 Steps to Lowess:
 
-1\. Data As usual, we have observed data pairs $(x_1,y_1),…,(x_n,y_n)$
+1\. Data
 
-2\. Span We need to choose the span of the smoothing, denoted f such that $0<f<1$. The span defines the number of closest neighbours to use when smoothing point $x_i$ such that $k=⌈f⋅n⌉$ where $k$ is the number of closest neighbours used for point and n is the number of observations.
+As usual, we have observed data pairs $(x_1,y_1),…,(x_n,y_n)$
 
-3\. Compute Weights The weights applied to each neighbour is calculated using the tricube kernel such that $$w_j=(1−(\frac{|x_j−x_i|}{d_{max}})^3)^3$$ where $w_j$ is the weight for neighbour $x_j$, $d_{max}$ is the distance to the farthest neighbour among the k neighbours selected.
+2\. Span
+
+We need to choose the **span** of the smoothing, denoted f such that $0<f<1$. The span defines the number of closest neighbours to use when smoothing point $x_i$ such that $k=⌈f⋅n⌉$ where $k$ is the number of closest neighbours used for point and n is the number of observations.
+
+3\. Compute Weights
+
+The weights applied to each neighbour is calculated using the tricube kernel such that $$w_j=(1−(\frac{|x_j−x_i|}{d_{max}})^3)^3$$ where $w_j$ is the weight for neighbour $x_j$, $d_{max}$ is the distance to the farthest neighbour among the k neighbours selected.
 
 Note that this means that if $|x_j−x_i|≥d_{max}$, then $w_j=0$.
 
-4\. Weighted Regression Perform a weighted linear regression $y=β_0+β_1x+e$ where the weighting means that we want to minimise $$\sum_{j∈neighbours}w_j(y_j−(\beta_0+\beta_1x_j)^2)$$
+4\. Weighted Regression
+
+Perform a weighted linear regression $y=β_0+β_1x+e$ where the weighting means that we want to minimise $$\sum_{j∈neighbours}w_j(y_j−(\beta_0+\beta_1x_j)^2)$$
 
 The optimal $\beta$ is given by $\hat{\beta} = (X^T W X)^{-1} X^T W y$ where $W$ is the diagonal matrix given by the diagonal values $(w_1,...,w_k)$.
 
@@ -48,20 +62,20 @@ The smoothed value for $x_i$ is then the predicted value $y^i=\hat\beta_0+\hat\b
 
 1.  Generate Simulated Data:
 
-    -   Set your seed to 1, i.e. set.seed(1).
-    -   Create x as a sequence of numbers from 1 to 100.
-    -   Generate y as a noisy sine wave such that $y_i = \sin\left(\frac{x_i}{10}\right) + e_i, \quad e_i \sim N(0, 0.2^2)$
+    -   Set your seed to 1, i.e. `set.seed(1)`.
+    -   Create **x** as a sequence of numbers from 1 to 100.
+    -   Generate **y** as a noisy sine wave such that $y_i = \sin\left(\frac{x_i}{10}\right) + e_i, \quad e_i \sim N(0, 0.2^2)$
 
 2.  Implement the LOWESS Algorithm:
 
-    -   Define a function customLowess(x, y, f) that returns the smoothed values.
+    -   Define a function `customLowess(x, y, f)` that returns the smoothed values.
 
 3.  Compare with R’s Built-in lowess():
 
-    -   Use the built-in lowess() function with the same f value. You will also need to set the iter argument to 0.
+    -   Use the built-in `lowess()` function with the same `f` value. You will also need to set the `iter` argument to 0.
     -   Plot both curves to compare their smoothing values.
 
-# Practical-Day-Four
+# 3. Practical-Day-Four
 
 ## Introduction
 
