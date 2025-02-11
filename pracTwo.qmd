@@ -1,5 +1,5 @@
 ---
-title: "pracTwo"
+title: "practical Two"
 editor: visual
 ---
 
@@ -66,11 +66,11 @@ customLowess <- function(x, y, f) {
   
 }
 
-y_smooth <- customLowess(x, y, 0.5)
+y_smooth <- customLowess(x, y, 0.51)
 
 ```
 
-## Plotting soln
+## Plotting solution
 
 ```{r}
 
@@ -88,17 +88,17 @@ lines(x, y_smooth, col = "red", lwd = 2)  # Add smoothed curve in red
 
 plot(x, y, col = "blue", pch = 16, main = "LOWESS Smoothing")  # Scatter plot of original data
 
-lines(lowess_result <- lowess(x, y, f = 0.5, iter = 0))
+lines(lowess_result <- lowess(x, y, f = 0.51, iter = 0))
 
 ```
 
-## Plotting on one graph
+## Plotting both lines on one graph
 
 ```{r}
 
 plot(x, y, pch = 16, col = "gray", main = "LOWESS Smoothing Comparison", xlab = "x", ylab = "y")
-lines(x, y_smooth, col = "blue", lwd = 2, lty = 2)
-lines(lowess_result, col = "red", lwd = 2, lty = 3)
-legend("topright", legend = c("Custom LOWESS", "Built-in LOWESS"), col = c("blue", "red"), lty = c(2, 3), lwd = 2, cex = 0.8)
+lines(x, y_smooth, col = "blue", lwd = 2, lty = 1)
+lines(lowess_result, col = "red", lwd = 2, lty = 1)
+legend("topright", legend = c("Custom LOWESS", "Built-in LOWESS"), col = c("blue", "red"), lty = c(1, 1), lwd = 2, cex = 0.8)
 
 ```
